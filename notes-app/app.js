@@ -9,12 +9,12 @@ fs.appendFileSync("notes.txt", " Xavier San Lorenzo");
 
 //IMPORTING YOUR OWN FILES
 const add = require("./utils"); // Load a file
-const getNotes = require("./notes");
+const note = require("./notes");
 const sum = add(5, 2);
-const printNotes = getNotes();
+// const printNotes = getNotes();
 
-console.log(printNotes);
-console.log(sum);
+// console.log(printNotes);
+// console.log(sum);
 
 //IMPORTING NPM MODULES
 
@@ -61,8 +61,9 @@ will output this if no [2] if it has [2] it will show Xavier only
 // }
 // console.log(commandTwo); // Natsu
 
-// ARGUMENT PARSING WITH YARGS: part 1
+// ARGUMENT PARSING WITH YARGS: part 1 //Argument Parsing with Yargs part 2
 const yargs = require("yargs"); // node app.js add --title='Xavier'
+const { argv } = require("process");
 // console.log(yargs.argv); // { _: [ 'add' ], title: 'Xavier', '$0': 'app.js' }
 // const one = yargs.argv._;
 // const two = yargs.argv.title;
@@ -80,8 +81,20 @@ yargs.version("1.1.0");
 yargs.command({
   command: "add",
   describe: "Add a new note",
-  handler: function () {
-    console.log("Adding a new note");
+  builder: {
+    title: {
+      describe: "Add title",
+      demandOption: true,
+      type: "string",
+    },
+    body: {
+      describe: "Add body",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler: function (argv) {
+    note.addNote(argv.title, argv.body);
   },
 });
 
@@ -89,8 +102,15 @@ yargs.command({
 yargs.command({
   command: "remove",
   describe: "Remove a note",
-  handler: function () {
-    console.log("Removing a note");
+  builder: {
+    title: {
+      describe: "Note title",
+      demandOption: true,
+      type: "string",
+    },
+  },
+  handler: function (argv) {
+    note.removeTitle(argv.title);
   },
 });
 
@@ -107,10 +127,31 @@ yargs.command({
 yargs.command({
   command: "read",
   describe: "reading",
-  handler: function () {
-    console.log("Read now");
+  builder: {
+    title: {
+      demandOption: true,
+      describe: "Read title",
+      type: "string",
+    },
+  },
+  handler: (argv) => {
+    note.readNote(argv.title);
   },
 });
-console.log(yargs.argv);
 
-//Argument Parsing with Yargs part 2
+//print list Notes
+yargs.command({
+  command: "list",
+  describe: "Print List",
+  handler: () => {
+    note.printNotes();
+  },
+});
+
+// console.log(yargs.argv); or yargs.parse();
+yargs.parse();
+
+// STORING DATA WITH JSON
+// IN PLAYGROUND FOLDER
+
+//ADDING A NOTE
